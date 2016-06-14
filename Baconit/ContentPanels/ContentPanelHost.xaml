@@ -10,69 +10,8 @@
 
     <Grid Background="#191919">
         <!--  Animations  -->
-        <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup x:Name="LoadingBlock">
-                <VisualState x:Name="HideProgressHolder">
-                    <Storyboard Completed="HideProgressHolder_Completed">
-                        <DoubleAnimation Duration="00:00:00.5"
-                                         From="1.0"
-                                         Storyboard.TargetName="ui_progressHolder"
-                                         Storyboard.TargetProperty="Opacity"
-                                         To="0.0">
-                            <DoubleAnimation.EasingFunction>
-                                <QuinticEase EasingMode="EaseOut" />
-                            </DoubleAnimation.EasingFunction>
-                        </DoubleAnimation>
-                        <ObjectAnimationUsingKeyFrames BeginTime="00:00:00"
-                                                       Storyboard.TargetName="ui_progressHolder"
-                                                       Storyboard.TargetProperty="Visibility">
-                            <DiscreteObjectKeyFrame KeyTime="00:00:00.5">
-                                <DiscreteObjectKeyFrame.Value>
-                                    <Visibility>Collapsed</Visibility>
-                                </DiscreteObjectKeyFrame.Value>
-                            </DiscreteObjectKeyFrame>
-                        </ObjectAnimationUsingKeyFrames>
-                    </Storyboard>
-                </VisualState>
-                <VisualState x:Name="HideProgressHolderInstant">
-                    <Storyboard Completed="HideProgressHolder_Completed">
-                        <ObjectAnimationUsingKeyFrames BeginTime="00:00:00"
-                                                       Storyboard.TargetName="ui_progressHolder"
-                                                       Storyboard.TargetProperty="Visibility">
-                            <DiscreteObjectKeyFrame KeyTime="00:00:00.0">
-                                <DiscreteObjectKeyFrame.Value>
-                                    <Visibility>Collapsed</Visibility>
-                                </DiscreteObjectKeyFrame.Value>
-                            </DiscreteObjectKeyFrame>
-                        </ObjectAnimationUsingKeyFrames>
-                    </Storyboard>
-                </VisualState>
-
-                <VisualState x:Name="ShowProgressHolder">
-                    <Storyboard>
-                        <DoubleAnimation Duration="00:00:00.5"
-                                         From="0.0"
-                                         Storyboard.TargetName="ui_progressHolder"
-                                         Storyboard.TargetProperty="Opacity"
-                                         To="1.0">
-                            <DoubleAnimation.EasingFunction>
-                                <QuinticEase EasingMode="EaseOut" />
-                            </DoubleAnimation.EasingFunction>
-                        </DoubleAnimation>
-                        <ObjectAnimationUsingKeyFrames BeginTime="00:00:00"
-                                                       Storyboard.TargetName="ui_progressHolder"
-                                                       Storyboard.TargetProperty="Visibility">
-                            <DiscreteObjectKeyFrame KeyTime="00:00:00">
-                                <DiscreteObjectKeyFrame.Value>
-                                    <Visibility>Visible</Visibility>
-                                </DiscreteObjectKeyFrame.Value>
-                            </DiscreteObjectKeyFrame>
-                        </ObjectAnimationUsingKeyFrames>
-                    </Storyboard>
-                </VisualState>
-            </VisualStateGroup>
-
-            <VisualStateGroup x:Name="NsfwBlock">
+    <VisualStateManager.VisualStateGroups>
+      <VisualStateGroup x:Name="NsfwBlock">
                 <VisualState x:Name="HideNsfwBlock">
                     <Storyboard>
                         <DoubleAnimation Duration="00:00:00.5"
@@ -194,10 +133,9 @@
         </VisualStateManager.VisualStateGroups>
 
         <!--  Holds the main content  -->
-        <Grid x:Name="ui_contentRoot" Opacity="0" />
+        <Grid x:Name="ui_contentRoot" />
 
         <!--  The Progress UI  -->
-        <Grid x:Name="ui_progressHolder" Background="#191919">
             <StackPanel HorizontalAlignment="Stretch"
                         VerticalAlignment="Center"
                         Orientation="Vertical">
@@ -209,15 +147,16 @@
                               Width="40"
                               Height="40"
                               Background="Transparent"
-                              IsActive="True" />
+                              Visibility ="{x:Bind IsLoading, Converter={StaticResource BoolToVisibilityConverter}}"
+                              IsActive="{x:Bind IsLoading, Mode=OneWay}" />
                 <TextBlock x:Name="ui_progressText"
                            Margin="0,12,0,0"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"
                            FontSize="16"
+                           Visibility = "{x:Bind IsLoading, Converter={StaticResource BoolToVisibilityConverter}}"
                            Text="Loading" />
             </StackPanel>
-        </Grid>
 
         <!--  generic message UI  -->
         <Grid x:Name="ui_genericMessage"

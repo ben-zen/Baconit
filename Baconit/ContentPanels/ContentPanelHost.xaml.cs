@@ -61,12 +61,12 @@ namespace Baconit.ContentPanels
         /// <summary>
         /// Indicates if we are showing loading.
         /// </summary>
-        bool m_isLoadingShowing = false;
+        public bool IsLoading { get; private set; } = false;
 
         /// <summary>
         /// Indicates if we are showing nsfw.
         /// </summary>
-        bool m_isNsfwShowing = false;
+        public bool IsNsfwBlocked { get; private set; } = false;
 
         /// <summary>
         /// Indicates if the generic message is showing.
@@ -265,7 +265,7 @@ namespace Baconit.ContentPanels
             ui_contentRoot.Children.Clear();
 
             // Set loading.
-            ToggleProgress(true, false);
+            IsLoading = true;
         }
 
         /// <summary>
@@ -278,8 +278,8 @@ namespace Baconit.ContentPanels
                 // If we don't have content yet show the loading screen.
                 if(m_currentPanelBase == null)
                 {
-                    ui_contentRoot.Opacity = 0;
-                    ToggleProgress(true);
+                    //ui_contentRoot.Opacity = 0;
+                    IsLoading = true;
                 }
             }
         }
@@ -293,7 +293,7 @@ namespace Baconit.ContentPanels
             IContentPanelBase panelBase = m_currentPanelBase;
             if(panelBase != null)
             {
-                ToggleProgress(panelBase.IsLoading);
+                IsLoading = panelBase.IsLoading;
             }
         }
 
@@ -412,53 +412,12 @@ namespace Baconit.ContentPanels
                 // Note is is important to not collapse, or the content might not load.
                 if (panelBase.IsLoading)
                 {
-                    ui_contentRoot.Opacity = 0;
+                    //ui_contentRoot.Opacity = 0;
                 }
 
                 // Update the state of loading.
-                ToggleProgress(panelBase.IsLoading);
+                IsLoading = panelBase.IsLoading;
             }
-        }
-
-        /// <summary>
-        /// Fades in or out the progress UI.
-        /// </summary>
-        private void ToggleProgress(bool show, bool disableActive = false)
-        {
-            m_isLoadingShowing = show;
-
-            if (show)
-            {
-                ui_progressRing.IsActive = !disableActive && show;
-                VisualStateManager.GoToState(this, "ShowProgressHolder", true);
-            }
-            else
-            {
-                HideShowContentIfNeeded();
-
-                // If we are trying to hide fast enough (the control was just made or the panel just added)
-                // don't bother showing loading since it will cause a weird looking UI.
-                TimeSpan timeSincePanelAdded = DateTime.Now - m_hostCreationTime;
-                if (timeSincePanelAdded.TotalMilliseconds < 200)
-                {
-                    VisualStateManager.GoToState(this, "HideProgressHolderInstant", true);
-                }
-                else
-                {
-                    VisualStateManager.GoToState(this, "HideProgressHolder", true);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Fired when the progress holder is closed.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void HideProgressHolder_Completed(object sender, object e)
-        {
-            ui_progressRing.IsActive = false;
-            m_isLoadingShowing = false;
         }
 
         #endregion
@@ -476,7 +435,7 @@ namespace Baconit.ContentPanels
 
             if (SetNsfwBlock(true))
             {
-                ui_contentRoot.Opacity = 0;
+                //ui_contentRoot.Opacity = 0;
             }
         }
 
@@ -496,13 +455,13 @@ namespace Baconit.ContentPanels
                          !String.IsNullOrWhiteSpace(panelBase.Source.Subreddit) &&
                          !s_previousLoweredNsfwSubreddits.ContainsKey(panelBase.Source.Subreddit))))
             {
-                m_isNsfwShowing = true;
+                IsNsfwBlocked = true;
                 VisualStateManager.GoToState(this, "ShowNsfwBlock", true);
                 return true;
             }
             else
             {
-                m_isNsfwShowing = false;
+                IsNsfwBlocked = false;
 
                 if (instantOff)
                 {
@@ -525,7 +484,7 @@ namespace Baconit.ContentPanels
         private void NsfwBlockRoot_Tapped(object sender, TappedRoutedEventArgs e)
         {
             // Set our state.
-            m_isNsfwShowing = false;
+            IsNsfwBlocked = false;
 
             // Show the content if we can
             HideShowContentIfNeeded();
@@ -628,7 +587,7 @@ namespace Baconit.ContentPanels
                 // Note is is important to not collapse, or the content might not load.
                 if (panelBase.HasError)
                 {
-                    ui_contentRoot.Opacity = 0;
+                    //ui_contentRoot.Opacity = 0;
                 }
 
                 // Update the state of the UI. If we are hiding here we want it instant.
@@ -650,7 +609,7 @@ namespace Baconit.ContentPanels
                 ToggleGenericMessage(true, "Tap anywhere to load content", "You can change this behavior in the settings", true);
 
                 // Hide loading.
-                ToggleProgress(false, true);
+                IsLoading = false;
             }
             return m_isShowingContentLoadBlock;
         }
@@ -711,7 +670,7 @@ namespace Baconit.ContentPanels
                 ToggleGenericMessage(false);
 
                 // Show loading
-                ToggleProgress(true);
+                IsLoading = true;
             }
             else
             {
@@ -744,9 +703,9 @@ namespace Baconit.ContentPanels
         /// </summary>
         private void HideShowContentIfNeeded()
         {
-            if(!m_isNsfwShowing && !m_isLoadingShowing && !m_isGenericMessageShowing)
+            if(!IsNsfwBlocked && !IsLoading && !m_isGenericMessageShowing)
             {
-                ui_contentRoot.Opacity = 1;
+                //ui_contentRoot.Opacity = 1;
             }
         }
     }

@@ -5,7 +5,9 @@
              RequestedTheme="Dark">
 
     <Application.Resources>
-        <Style x:Key="ListViewItemNoHighlight" TargetType="ListViewItem">
+      <!-- Converters -->
+    <local:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    <Style x:Key="ListViewItemNoHighlight" TargetType="ListViewItem">
             <Setter Property="Padding" Value="0" />
             <Setter Property="HorizontalAlignment" Value="Stretch" />
             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
